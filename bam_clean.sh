@@ -1,12 +1,12 @@
 #!/bin/bash -l
 
-#SBATCH -D /group/jrigrp11/juliagh/moe_data_deduped_bams
+#SBATCH -D /group/jrigrp11/juliagh/moe_data_deduped_bams/tmp
 #SBATCH -o /home/jgharenc/Raphanus_scripts/slurm_log/clean_bams.%A_%a.txt
 #SBATCH -e /home/jgharenc/Raphanus_scripts/slurm_log/clean_bams.%A_%a.txt
 #SBATCH -A jrigrp
 #SBATCH -p high2
 #SBATCH --time=10-00:00:00
-#SBATCH --array=1-382 # []%6 limits it so only 6 run in parallel at once
+#SBATCH --array=1-2 # []%6 limits it so only 6 run in parallel at once
 #SBATCH --mem=60G # Maybe bump up to like 20 and see if it runs faster?
 
 # Bam cleaning code: removes duplicates, low mapping quality reads, and regions with greater or less than a 99th percentile coverage cutoff
@@ -25,35 +25,35 @@ SAMPLE_ID=$(echo $BAM_FILE |cut  -d "_" -f 1,2)
 # to use markdup, need several steps first:
 
 #name order/collate
-#echo "samtools collate -o ${SAMPLE_ID}_collated.bam ${BAM_FILE}" 
-#samtools collate -o ${SAMPLE_ID}_collated.bam ${BAM_FILE} || echo "samtools collate failed for ${SAMPLE_ID}"
+echo "samtools collate -o ${SAMPLE_ID}_collated.bam ${BAM_FILE}" 
+samtools collate -o ${SAMPLE_ID}_collated.bam ${BAM_FILE} || echo "samtools collate failed for ${SAMPLE_ID}"
 
 #Add ms and MC tags for markdup to use later (-m adds ms (mate score) tags):
-#samtools fixmate -m ${SAMPLE_ID}_collated.bam ${SAMPLE_ID}_fixmated.bam || echo "samtools fixmate failed for ${SAMPLE_ID}"
+samtools fixmate -m ${SAMPLE_ID}_collated.bam ${SAMPLE_ID}_fixmated.bam || echo "samtools fixmate failed for ${SAMPLE_ID}"
 
 #Markdup needs position order (-o is output file)
-#samtools sort -o ${SAMPLE_ID}_sorted.bam ${SAMPLE_ID}_fixmated.bam || echo "samtools sort1 failed for ${SAMPLE_ID}"
+samtools sort -o ${SAMPLE_ID}_sorted.bam ${SAMPLE_ID}_fixmated.bam || echo "samtools sort1 failed for ${SAMPLE_ID}"
 
 #finally, mark and remove duplicates
-#samtools markdup -r ${SAMPLE_ID}_sorted.bam ${SAMPLE_ID}_rmdup.bam || echo "samtools markdup failed for ${SAMPLE_ID}"
+samtools markdup -r ${SAMPLE_ID}_sorted.bam ${SAMPLE_ID}_rmdup.bam || echo "samtools markdup failed for ${SAMPLE_ID}"
 
 #remove all the annoying intermediate bams
-#rm ${SAMPLE_ID}_collated.bam ${SAMPLE_ID}_sorted.bam ${SAMPLE_ID}_fixmated.bam 
+rm ${SAMPLE_ID}_collated.bam ${SAMPLE_ID}_sorted.bam ${SAMPLE_ID}_fixmated.bam 
 
 ############################################################
 ### STEP 2: REMOVING LOW MAP QUALITY READS ###
 
 # indexing/sorting bams
-#samtools index ${SAMPLE_ID}_rmdup.bam || echo "samtools index1 failed for ${SAMPLE_ID}"
+samtools index ${SAMPLE_ID}_rmdup.bam || echo "samtools index1 failed for ${SAMPLE_ID}"
 
 # Filter bams to remove reads with a MAPQ phred score less than 20
-#samtools view -h -q 20 ${SAMPLE_ID}_rmdup.bam > ${SAMPLE_ID}_rmdup_q20.bam || echo "samtools q20 filter failed for ${SAMPLE_ID}"
+samtools view -h -q 20 ${SAMPLE_ID}_rmdup.bam > ${SAMPLE_ID}_rmdup_q20.bam || echo "samtools q20 filter failed for ${SAMPLE_ID}"
 
 ############################################################
 ### STEP 3: REMOVING READS IN 99TH PERCENTILE OF COVERAGE
 
 # calculate coverage
-#samtools depth -a ${SAMPLE_ID}_rmdup_q20.bam > ${SAMPLE_ID}_coverage.txt || echo "samtools depth failed for ${SAMPLE_ID}"
+samtools depth -a ${SAMPLE_ID}_rmdup_q20.bam > ${SAMPLE_ID}_coverage.txt || echo "samtools depth failed for ${SAMPLE_ID}"
 
 # load conda env with python dependencies
 module load conda

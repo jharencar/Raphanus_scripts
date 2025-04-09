@@ -7,7 +7,7 @@
 #SBATCH -A jrigrp
 #SBATCH -p high2
 #SBATCH --time=1-00:00:00
-#SBATCH --array=1-383 # []%6 limits it so only 6 run in parallel at once
+#SBATCH --array=1-1 # []%6 limits it so only 6 run in parallel at once
 #submit with SBATCH array, submit as normal or to specify certain array numbers: sbatch --array=x-y job_script.sbatch
 
 ##(more info on arrays: https://support.ceci-hpc.be/doc/_contents/SubmittingJobs/SlurmFAQ.html)
@@ -30,4 +30,4 @@ SAMPLE_NAME=$(echo $R1 |cut  -d "_" -f 2,3,4 )
 ### NOTE: index reference before submitting SLURM: bwa index $REF 
 # bwa mapping; -t number of treads; -M is a verboseLevel ; -R readGroupHeader ; 
 echo "bwa-mem2 mem -t ${NUMTHREADS} -M -R "@RG\tID:${LIBRARY_NAME}\tSM:${SAMPLE_NAME}\tLB:${LIBRARY_NAME}\tPL:ILLUMINA\tPU:none" ${REF} ${R1} ${R2} | samtools view -hb -@ ${NUMTHREADS} - | samtools sort -@ ${NUMTHREADS} - -o ${SAMPLE_NAME}_paired_output.bam"
-bwa-mem2 mem -t ${NUMTHREADS} -M -R "@RG\tID:${LIBRARY_NAME}\tSM:${SAMPLE_NAME}\tLB:${LIBRARY_NAME}\tPL:ILLUMINA\tPU:none" ${REF} ${R1} ${R2} | samtools view -hb -@ ${NUMTHREADS} - | samtools sort -@ ${NUMTHREADS} - -o ${SAMPLE_NAME}_sativus_ref_paired_output.bam
+/home/jgharenc/software/bwa-mem2-2.2.1_x64-linux/bwa-mem2 mem -t ${NUMTHREADS} -M -R "@RG\tID:${LIBRARY_NAME}\tSM:${SAMPLE_NAME}\tLB:${LIBRARY_NAME}\tPL:ILLUMINA\tPU:none" ${REF} ${R1} ${R2} | samtools view -hb -@ ${NUMTHREADS} - | samtools sort -@ ${NUMTHREADS} - -o ${SAMPLE_NAME}_sativus_ref_paired_output.bam

@@ -8,6 +8,6 @@
 #SBATCH --time=04:00:00
 #SBATCH --mem=240Gb
 
-module load bwa 
+module load bwa-mem2/2.2.1 
 
-bwa index renamed_NAU.LB_R.sativus_genome.fasta.gz
+/home/jgharenc/software/bwa-mem2-2.2.1_x64-linux/bwa-mem2 index renamed_NAU.LB_R.sativus_genome.fasta.gz

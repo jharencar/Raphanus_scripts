@@ -8,6 +8,6 @@
 #SBATCH --time=04:00:00
 #SBATCH --mem=240Gb
 
-module load bwa 
+module load samtools 
 
-bwa index renamed_NAU.LB_R.sativus_genome.fasta.gz
+samtools faidx renamed_NAU.LB_R.sativus_genome.fasta
