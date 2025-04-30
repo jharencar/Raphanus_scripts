@@ -10,4 +10,4 @@
 
 module load samtools 
 
-samtools faidx renamed_NAU.LB_R.sativus_genome.fasta
+samtools faidx NAU.LB_R.sativus_genome.fasta.gz  

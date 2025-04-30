@@ -7,7 +7,7 @@ library(qqman)
 # install.packages("qqman")
 
 # Specify the directory containing GEMMA output files
-gemma_output_dir <- "/group/jrigrp11/juliagh/GEMMA/output"
+gemma_output_dir <- "/group/jrigrp11/juliagh/GEMMA/output/log_response_ratio_0.1geno"
 
 # Get a list of all *assoc.txt files in the directory
 gemma_output_files <- list.files(path = gemma_output_dir, pattern = "\\.assoc\\.txt$", full.names = TRUE)
@@ -20,7 +20,7 @@ plot_gemma_results <- function(gemma_output_file) {
   
   # Extract the trait name from the filename for use as title
   filename <- basename(gemma_output_file)
-  trait_name <- str_extract(filename, "^([^_]+)") # Extract everything before first underscore.  Adapt the regex if your filenames are structured differently.
+  trait_name <- str_extract(filename, "^([^_]+_[^_]+)") # Extract everything before second underscore.  Adapt the regex if your filenames are structured differently.
   
   # Calculate FDR threshold
   gemma_data <- gemma_data %>%
@@ -55,7 +55,10 @@ for (gemma_output_file in gemma_output_files) {
   plot_gemma_results(gemma_output_file)
 }
 
-
+## for just doing specific plots:
+#plot_gemma_results("/group/jrigrp11/juliagh/GEMMA/output/GS_OX_function_01.geno_treatment_1_gemma_output.assoc.txt")
+#gemma_output_files <- c("/group/jrigrp11/juliagh/GEMMA/output/DOG_function_01.geno_treatment_1_gemma_output.assoc.txt","/group/jrigrp11/juliagh/GEMMA/output/GS_OX_function_01.geno_treatment_1_gemma_output.assoc.txt")
+ 
 ## adding plots with qqman automated package
 for (gemma_output_file in gemma_output_files) {
   print(paste("Processing file (qqman):", gemma_output_file))
@@ -74,7 +77,7 @@ for (gemma_output_file in gemma_output_files) {
   
   # Extract the trait name from the filename
   filename <- basename(gemma_output_file)
-  trait_name <- str_extract(filename, "^([^_]+)")
+  trait_name <- str_extract(filename, "^([^_]+_[^_]+)")
   
   # Generate and save the Manhattan plot
   pdf(file = file.path(gemma_output_dir, paste0(trait_name, "_gemma_qqman_manhattan.pdf")),
