@@ -7,7 +7,7 @@ library(qqman)
 # install.packages("qqman")
 
 # Specify the directory containing GEMMA output files
-gemma_output_dir_2 <- "/group/jrigrp11/juliagh/GEMMA/output/log_response_ratio_0.2geno"
+gemma_output_dir_2 <- "/group/jrigrp11/juliagh/GEMMA/output/tmp"
 
 # Get a list of all *assoc.txt files in the directory
 gemma_output_files_2 <- list.files(path = gemma_output_dir_2, pattern = "\\.assoc\\.txt$", full.names = TRUE)
